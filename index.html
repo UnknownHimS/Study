@@ -44,17 +44,17 @@
 
 
     textarea {
-      flex: 1;
-      width: 90%;
-      height: 200px;
-      margin-top: 10px;
-      border-radius: 8px;
-      padding: 10px;
-      font-size: 1em;
-      background: rgba(255,255,255,0.9);
-      border: none;
-      resize: none;
-    }
+        width: 400px;           /* Start with a fixed width */
+        height: 200px;
+        resize: horizontal;     /* 👈 allow width resizing */
+        margin-top: 10px;
+        border-radius: 8px;
+        padding: 10px;
+        font-size: 1em;
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+      }
+
 
     #drawCanvas {
       position: fixed;
