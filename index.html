@@ -921,14 +921,26 @@ window.addEventListener('load', () => {
     }, 10000);
 
     // Load PDF from last saved url
-    pdfViewer.src = localStorage.getItem('pdfUrl') || '';
+    const mediaViewer = document.getElementById('mediaViewer');
+    const savedType = localStorage.getItem('mediaType');
+    const savedUrl = localStorage.getItem('mediaUrl');
+    
+    if (savedUrl) {
+      mediaViewer.src = savedUrl;
+      if (savedType === 'pdf') {
+        mediaViewer.type = 'application/pdf';
+      } else {
+        mediaViewer.type = 'text/html';
+      }
+    }
+
 
     // Save pdf url on set
     pdfBtn.onclick = () => {
-      const url = prompt("Enter PDF URL:");
+      const url = prompt("Enter URL:");
       if (url) {
         pdfViewer.src = url;
-        localStorage.setItem('pdfUrl', url);
+        localStorage.setItem('mediaUrl', url);
       }
     };
   </script>
