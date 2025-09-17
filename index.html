@@ -221,7 +221,8 @@
   
   <div id="app">
     <div id="pdf-container">
-      <iframe id="pdfViewer" type="application/pdf"></iframe>
+      <iframe id="mediaViewer" allowfullscreen></iframe>
+
     </div>
   
     
@@ -290,7 +291,17 @@
       </svg>
     </button>
     <input type="file" id="deviceImageInput" accept="image/*" style="display:none;" />
-    
+
+        <!-- Video upload button -->
+    <button id="btn-video" title="Set Video URL" aria-label="Set Video URL">
+      <!-- Video icon -->
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+      </svg>
+    </button>
+
     
      <button id="save-everything" style=" color: white; border: none; cursor: pointer;">💾</button>
      
@@ -305,7 +316,10 @@
     const imgBtn = document.getElementById('btn-img');
     const clearBtn = document.getElementById('btn-clear');
     const pdfBtn = document.getElementById('btn-pdf');
-    const pdfViewer = document.getElementById('pdfViewer');
+    const videoBtn = document.getElementById('btn-video');
+
+    const pdfViewer = document.getElementById('mediaViewer'); 
+
     const pdfContainer = document.getElementById('pdf-container');
     const notesArea = document.getElementById('notes');
     const canvas = document.getElementById('drawCanvas');
@@ -710,10 +724,36 @@ window.addEventListener('load', () => {
       }
     };
 
-    pdfBtn.onclick = () => {
-      const url = prompt("Enter PDF URL:");
+   pdfBtn.onclick = () => {
+      const url = prompt("Enter PDF URL (must end with .pdf):");
       if (url) {
-        pdfViewer.src = url;
+        const viewer = document.getElementById('mediaViewer');
+        viewer.src = url;
+        viewer.type = "application/pdf";
+        localStorage.setItem('mediaType', 'pdf');
+        localStorage.setItem('mediaUrl', url);
+      }
+    };
+    
+    videoBtn.onclick = () => {
+      const url = prompt("Enter YouTube or video URL:");
+      if (url) {
+        let embedUrl = url;
+    
+        // Handle YouTube short or long links
+        if (url.includes("youtube.com/watch?v=")) {
+          const videoId = url.split("v=")[1].split("&")[0];
+          embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        } else if (url.includes("youtu.be/")) {
+          const videoId = url.split("youtu.be/")[1].split("?")[0];
+          embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        }
+    
+        const viewer = document.getElementById('mediaViewer');
+        viewer.src = embedUrl;
+        viewer.type = "text/html";
+        localStorage.setItem('mediaType', 'video');
+        localStorage.setItem('mediaUrl', embedUrl);
       }
     };
 
