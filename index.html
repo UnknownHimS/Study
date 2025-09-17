@@ -266,7 +266,7 @@
       </svg>
     </button>
    
-     <button id="save-everything" style=" border-radius: 6px; background: #4CAF50; color: white; border: none; cursor: pointer;">💾</button>
+     <button id="save-everything" style=" color: white; border: none; cursor: pointer;">💾</button>
 
   </div>
    
@@ -322,7 +322,7 @@ function saveAll() {
   // Visual feedback
   const saveBtn = document.getElementById('save-everything');
   saveBtn.textContent = "✅ Saved!";
-  setTimeout(() => saveBtn.textContent = "💾 Save All", 1500);
+  setTimeout(() => saveBtn.textContent = "💾", 1500);
 }
 
 document.getElementById('save-everything').onclick = saveAll;
