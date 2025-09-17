@@ -660,26 +660,29 @@ window.addEventListener('load', () => {
       img.onmousedown = function (e) {
         if (!img.classList.contains('selected')) selectImage();
         e.preventDefault();
+      
         let shiftX = e.clientX - img.getBoundingClientRect().left;
         let shiftY = e.clientY - img.getBoundingClientRect().top;
-
+      
         function moveAt(pageX, pageY) {
           img.style.left = pageX - shiftX + 'px';
           img.style.top = pageY - shiftY + 'px';
           updateResizeHandlePos();
         }
-
+      
         function onMouseMove(e) {
           moveAt(e.pageX, e.pageY);
         }
-
-        document.addEventListener('mousemove', onMouseMove);
-
-        img.onmouseup = function () {
+      
+        function onMouseUp() {
           document.removeEventListener('mousemove', onMouseMove);
-          img.onmouseup = null;
-        };
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+      
+        document.addEventListener('mousemove', onMouseMove);
+        document.addEventListener('mouseup', onMouseUp);
       };
+
       img.ondragstart = () => false;
 
       // Resize image with handle
