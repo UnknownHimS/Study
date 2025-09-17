@@ -2,16 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Peaceful Study UI</title>
+  <title>Peaceful Study Tool</title>
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
       background-size: cover;
-      height: 100vh;
       overflow: hidden;
     }
 
@@ -22,54 +19,33 @@
       padding: 10px;
     }
 
-    iframe {
-      height: 250px;
-      width: 100%;
+    #pdf-container {
+      resize: vertical;
+      overflow: auto;
       border: 2px solid #ccc;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      border-radius: 8px;
+      min-height: 200px;
+      max-height: 60vh;
+      background-color: white;
     }
 
-    .main-area {
-      flex: 1;
-      display: flex;
-      position: relative;
+    embed {
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
     }
 
     textarea {
       flex: 1;
-      padding: 15px;
+      width: 100%;
+      height: 200px;
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 10px;
       font-size: 1em;
       border: none;
-      border-radius: 10px;
-      resize: none;
       background-color: rgba(255, 255, 255, 0.9);
-      z-index: 2;
-    }
-
-    .tools {
-      width: 80px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background-color: rgba(255, 255, 255, 0.7);
-      border-left: 2px solid #ccc;
-      border-radius: 10px 0 0 10px;
-      padding-top: 10px;
-      z-index: 3;
-    }
-
-    .tools button, .tools input[type="color"] {
-      margin: 8px 0;
-      width: 50px;
-      height: 40px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .tools button:hover {
-      background-color: #eee;
+      resize: none;
     }
 
     #drawCanvas {
@@ -85,7 +61,30 @@
       pointer-events: all;
     }
 
-    /* Timer Button */
+    /* Floating Drawing Toolbar */
+    .toolbar {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 5;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: move;
+    }
+
+    .toolbar button, .toolbar input {
+      margin: 5px 0;
+      width: 100%;
+    }
+
+    .toolbar input[type="color"] {
+      padding: 0;
+      height: 30px;
+    }
+
+    /* Timer */
     #timer-btn {
       position: fixed;
       left: 20px;
@@ -95,11 +94,9 @@
       padding: 10px 15px;
       border-radius: 8px;
       cursor: pointer;
-      z-index: 4;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 6;
     }
 
-    /* Timer Popup */
     #timer-popup {
       position: fixed;
       left: 20px;
@@ -108,7 +105,7 @@
       padding: 15px;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      z-index: 5;
+      z-index: 6;
       display: none;
     }
 
@@ -129,18 +126,22 @@
       cursor: pointer;
     }
 
-    #timer-popup button:hover {
-      background-color: #3e8e41;
-    }
-
     #countdown-display {
       font-size: 1.2em;
       margin-top: 5px;
+    }
+
+    img.uploaded-img {
+      position: absolute;
+      max-width: 200px;
+      cursor: move;
+      z-index: 4;
     }
   </style>
 </head>
 <body>
 
+  <!-- Timer Button + Popup -->
   <button id="timer-btn">⏱ Timer</button>
   <div id="timer-popup">
     <label>Set Time (min):</label>
@@ -151,30 +152,42 @@
     <button onclick="resetTimer()">Reset</button>
   </div>
 
+  <!-- Main App Layout -->
   <div id="app">
-    <!-- PDF at the top -->
-    <iframe src="https://example.com/sample.pdf"></iframe>
-
-    <!-- Notes + Tools -->
-    <div class="main-area">
-      <!-- Notes -->
-      <textarea id="notes" placeholder="📝 Write your notes here..."></textarea>
-
-      <!-- Drawing Tools Sidebar -->
-      <div class="tools">
-        <input type="color" id="colorPicker" value="#000000" title="Pick color" />
-        <button onclick="toggleDraw()">✏️</button>
-        <button onclick="useEraser()">🧽</button>
-        <button onclick="clearCanvas()">🧹</button>
-      </div>
+    <!-- PDF Upload + Embed -->
+    <div style="margin-bottom: 5px;">
+      <input type="file" id="pdfUpload" accept="application/pdf" />
     </div>
+    <div id="pdf-container">
+      <embed id="pdfViewer" type="application/pdf" />
+    </div>
+
+    <!-- Notes -->
+    <textarea id="notes" placeholder="📝 Write your notes here..."></textarea>
   </div>
 
   <!-- Drawing Canvas -->
   <canvas id="drawCanvas"></canvas>
 
-  <!-- Script -->
+  <!-- Drawing Tools Toolbar -->
+  <div class="toolbar" id="toolbar">
+    <input type="color" id="colorPicker" value="#000000" />
+    <button onclick="toggleDraw()">✏️ Draw</button>
+    <button onclick="useEraser()">🧽 Erase</button>
+    <button onclick="clearCanvas()">🧹 Clear</button>
+    <input type="file" id="imgUpload" accept="image/*" />
+  </div>
+
   <script>
+    // PDF Upload
+    document.getElementById('pdfUpload').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        document.getElementById('pdfViewer').src = url;
+      }
+    });
+
     // Notes Autosave
     const notes = document.getElementById('notes');
     notes.value = localStorage.getItem('study-notes') || '';
@@ -182,15 +195,15 @@
       localStorage.setItem('study-notes', notes.value);
     });
 
-    // Timer Logic
-    const timerPopup = document.getElementById('timer-popup');
-    document.getElementById('timer-btn').addEventListener('click', () => {
-      timerPopup.style.display = timerPopup.style.display === 'block' ? 'none' : 'block';
-    });
-
+    // Timer
     let timerInterval;
     let totalTime = 20 * 60;
     let isRunning = false;
+    const timerPopup = document.getElementById('timer-popup');
+
+    document.getElementById('timer-btn').addEventListener('click', () => {
+      timerPopup.style.display = timerPopup.style.display === 'block' ? 'none' : 'block';
+    });
 
     function updateTimerDisplay() {
       const mins = String(Math.floor(totalTime / 60)).padStart(2, '0');
@@ -199,8 +212,7 @@
     }
 
     function startTimer() {
-      const mins = parseInt(document.getElementById('minutes').value || "20");
-      totalTime = mins * 60;
+      totalTime = parseInt(document.getElementById('minutes').value || "20") * 60;
       updateTimerDisplay();
       if (isRunning) return;
       isRunning = true;
@@ -230,8 +242,8 @@
     updateTimerDisplay();
 
     // Drawing
-    const canvas = document.getElementById('drawCanvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("drawCanvas");
+    const ctx = canvas.getContext("2d");
     let drawing = false;
     let erasing = false;
     let color = document.getElementById('colorPicker').value;
@@ -240,11 +252,10 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    document.getElementById('colorPicker').addEventListener('input', (e) => {
+    document.getElementById('colorPicker').addEventListener('input', e => {
       color = e.target.value;
       erasing = false;
     });
@@ -262,23 +273,78 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    canvas.addEventListener('mousedown', (e) => {
+    canvas.addEventListener("mousedown", e => {
       drawing = true;
       ctx.beginPath();
       ctx.moveTo(e.clientX, e.clientY);
     });
 
-    canvas.addEventListener('mousemove', (e) => {
+    canvas.addEventListener("mousemove", e => {
       if (!drawing) return;
       ctx.lineTo(e.clientX, e.clientY);
-      ctx.strokeStyle = erasing ? '#ffffff' : color;
+      ctx.strokeStyle = erasing ? "#ffffff" : color;
       ctx.lineWidth = erasing ? 30 : 2;
-      ctx.lineCap = 'round';
+      ctx.lineCap = "round";
       ctx.stroke();
     });
 
-    canvas.addEventListener('mouseup', () => drawing = false);
-    canvas.addEventListener('mouseout', () => drawing = false);
+    canvas.addEventListener("mouseup", () => drawing = false);
+    canvas.addEventListener("mouseout", () => drawing = false);
+
+    // Moveable toolbar
+    const toolbar = document.getElementById('toolbar');
+    toolbar.onmousedown = function (e) {
+      e.preventDefault();
+      let shiftX = e.clientX - toolbar.getBoundingClientRect().left;
+      let shiftY = e.clientY - toolbar.getBoundingClientRect().top;
+      function moveAt(pageX, pageY) {
+        toolbar.style.left = pageX - shiftX + 'px';
+        toolbar.style.top = pageY - shiftY + 'px';
+      }
+      function onMouseMove(e) {
+        moveAt(e.pageX, e.pageY);
+      }
+      document.addEventListener('mousemove', onMouseMove);
+      toolbar.onmouseup = () => {
+        document.removeEventListener('mousemove', onMouseMove);
+        toolbar.onmouseup = null;
+      };
+    };
+
+    toolbar.ondragstart = () => false;
+
+    // Image upload and place
+    document.getElementById('imgUpload').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.src = url;
+        img.className = 'uploaded-img';
+        img.style.top = '150px';
+        img.style.left = '150px';
+        document.body.appendChild(img);
+
+        img.onmousedown = function (e) {
+          e.preventDefault();
+          let shiftX = e.clientX - img.getBoundingClientRect().left;
+          let shiftY = e.clientY - img.getBoundingClientRect().top;
+          function moveAt(pageX, pageY) {
+            img.style.left = pageX - shiftX + 'px';
+            img.style.top = pageY - shiftY + 'px';
+          }
+          function onMouseMove(e) {
+            moveAt(e.pageX, e.pageY);
+          }
+          document.addEventListener('mousemove', onMouseMove);
+          img.onmouseup = () => {
+            document.removeEventListener('mousemove', onMouseMove);
+            img.onmouseup = null;
+          };
+        };
+        img.ondragstart = () => false;
+      }
+    });
   </script>
 </body>
 </html>
