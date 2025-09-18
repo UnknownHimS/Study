@@ -6,6 +6,41 @@
 <title>Sci-Fi Notes Editor</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+  .media-wrapper {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  margin: 10px 0;
+  border: 1px dashed #3f51b5;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: move;
+  resize: both;
+  overflow: auto;
+}
+
+.media-wrapper img,
+.media-wrapper video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.media-wrapper .delete-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #ff1744;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  padding: 2px 6px;
+  cursor: pointer;
+  z-index: 10;
+}
+
   body {
     margin: 0;
     background: #0b0f19;
@@ -336,24 +371,44 @@
     }
     imageInput.value = '';
   });
-  function insertImage(src) {
-    insertAtCursor(`<img src="${src}" alt="Inserted image" />`);
-  }
+ function insertImage(src) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'media-wrapper';
+  wrapper.contentEditable = false;
 
-  // Insert video file
-  insertVideoBtn.addEventListener('click', () => videoInput.click());
-  videoInput.addEventListener('change', e => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = ev => insertVideo(ev.target.result);
-      reader.readAsDataURL(file);
-    }
-    videoInput.value = '';
-  });
-  function insertVideo(src) {
-    insertAtCursor(`<video controls src="${src}"></video>`);
-  }
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = "Inserted image";
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-btn';
+  delBtn.innerText = '×';
+  delBtn.onclick = () => wrapper.remove();
+
+  wrapper.appendChild(img);
+  wrapper.appendChild(delBtn);
+  insertNode(wrapper);
+}
+
+function insertVideo(src) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'media-wrapper';
+  wrapper.contentEditable = false;
+
+  const video = document.createElement('video');
+  video.src = src;
+  video.controls = true;
+  video.style.width = "100%";
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'delete-btn';
+  delBtn.innerText = '×';
+  delBtn.onclick = () => wrapper.remove();
+
+  wrapper.appendChild(video);
+  wrapper.appendChild(delBtn);
+  insertNode(wrapper);
+}
 
   // Insert Image URL
   insertImageUrlBtn.addEventListener('click', () => {
@@ -402,6 +457,25 @@
     }
     editor.focus();
   }
+  function insertNode(node) {
+  editor.focus();
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) {
+    editor.appendChild(node);
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(node);
+
+  // Move cursor after the inserted node
+  range.setStartAfter(node);
+  range.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
 
   // Save Note
   saveBtn.addEventListener('click', () => {
