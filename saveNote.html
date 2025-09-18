@@ -297,6 +297,7 @@
   // Open editor
   openEditorBtn.addEventListener('click', () => {
     editorSection.classList.add('active');
+    aboutBtn.style.display = 'none';
     openEditorBtn.style.display = 'none';
     if (!editor.innerHTML.trim()) {
       editor.innerHTML = '<p>Start writing your sci-fi notes here...</p>';
@@ -307,6 +308,7 @@
   closeEditorBtn.addEventListener('click', () => {
     editorSection.classList.remove('active');
     openEditorBtn.style.display = 'flex';
+     aboutBtn.style.display = 'flex';
     deselectAllNotes();
     currentNoteId = null;
     clearEditor();
