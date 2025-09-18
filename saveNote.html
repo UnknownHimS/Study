@@ -4,205 +4,203 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Sci-Fi Notes Editor</title>
-
 <style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #0d1117;
-  color: #c9d1d9;
-}
-
-button {
-  background-color: #21262d;
-  color: #c9d1d9;
-  border: 1px solid #30363d;
-  padding: 6px 12px;
-  cursor: pointer;
-  border-radius: 4px;
-  margin: 2px;
-  transition: background-color 0.2s ease;
-}
-
-button:hover {
-  background-color: #30363d;
-}
-
-input[type="file"] {
-  display: none;
-}
-
-#openEditorBtn,
-#aboutBtn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 30px auto;
-  padding: 14px 24px;
-  font-size: 1.2em;
-}
-
-/* === Editor Layout === */
-#editorSection {
-  display: none;
-  flex-direction: column;
-  padding: 20px;
-  max-width: 900px;
-  margin: 0 auto;
-  background-color: #161b22;
-  border-radius: 8px;
-}
-
-#editorSection.active {
-  display: flex;
-}
-
-#editor {
-  background-color: #0d1117;
-  border: 1px solid #30363d;
-  min-height: 400px;
-  padding: 15px;
-  border-radius: 6px;
-  margin-top: 10px;
-  color: #c9d1d9;
-  overflow: auto;
-}
-
-#editor:focus {
-  outline: 2px solid #3f51b5;
-}
-
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-/* === Media Wrapper === */
-.media-wrapper {
-  position: relative;
-  display: inline-block;
-  margin: 10px 0;
-  padding: 5px;
-  border: 1px dashed #3f51b5;
-  border-radius: 4px;
-  resize: both;
-  overflow: auto;
-  cursor: move;
-  background-color: #1f2937;
-}
-
-.media-wrapper img,
-.media-wrapper video,
-.media-wrapper iframe {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  pointer-events: auto;
-}
-
-/* === Delete Button === */
-.media-wrapper .delete-btn {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  background: crimson;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-  cursor: pointer;
-  z-index: 10;
-}
-
-/* === Notes List === */
-#savedNotesList {
-  margin-top: 20px;
-  border-top: 1px solid #30363d;
-  padding-top: 10px;
-}
-
-.noteItem {
-  padding: 8px 12px;
-  margin-bottom: 5px;
-  border: 1px solid #3f51b5;
-  border-radius: 4px;
-  background-color: #1a1f2c;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.noteItem:hover {
-  background-color: #2a3250;
-}
-
-.noteItem.active {
-  background-color: #3f51b5;
-  color: #fff;
-  font-weight: bold;
-}
-
-/* === Modal Preview === */
-#previewModal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(13, 17, 23, 0.95);
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-}
-
-#previewBody {
-  background-color: #0d1117;
-  padding: 20px;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: auto;
-  border: 1px solid #30363d;
-  border-radius: 8px;
-  color: #c9d1d9;
-}
-
-#previewClose {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  background-color: crimson;
-  color: white;
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-}
-
-/* === Responsive === */
-@media (max-width: 768px) {
-  #editorSection {
-    padding: 10px;
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+  body {
+    margin: 0;
+    background: #0b0f19;
+    color: #c7d0f7;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  /* Toolbar Buttons Container */
+  #topButtons {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+  /* Toolbar Button Styles */
+  .toolbarBtn {
+    background: linear-gradient(145deg, #1b1f34, #0e1224);
+    border: 2px solid #3f51b5;
+    border-radius: 6px;
+    color: #a6b2ff;
+    font-weight: 700;
+    padding: 10px 20px;
+    cursor: pointer;
+    box-shadow: 0 0 10px #3f51b5;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+  }
+  .toolbarBtn:hover {
+    color: #fff;
+    box-shadow: 0 0 20px #7986cb;
+  }
+  .toolbarBtn svg {
+    fill: #7986cb;
+    width: 20px;
+    height: 20px;
   }
 
-  .toolbar {
-    flex-direction: column;
-  }
-
-  button {
+  /* Layout */
+  #container {
+    display: flex;
     width: 100%;
+    height: 100vh;
+  }
+
+  /* Editor Section */
+  #editorSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-right: 2px solid #3f51b5;
+    background: #12162b;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    transform: translateX(100%);
+    position: relative;
+    z-index: 10;
+  }
+  #editorSection.active {
+    transform: translateX(0);
+  }
+
+  /* Editor Toolbar */
+  #editorToolbar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  #editorToolbar button {
+    background: #1e2447;
+    border: none;
+    color: #a6b2ff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 0 8px #3f51b5;
+    transition: background 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  #editorToolbar button:hover {
+    background: #3f51b5;
+    color: white;
+  }
+  #editorToolbar input[type="file"] {
+    display: none;
+  }
+
+  /* Editable Content */
+  #editor {
+    flex: 1;
+    background: #1a1f39;
+    border-radius: 6px;
+    padding: 15px;
+    overflow-y: auto;
+    outline: none;
+    border: 1px solid #3f51b5;
+    color: #c7d0f7;
+  }
+
+  #editor img, #editor video, #editor iframe {
+    max-width: 100%;
+    border-radius: 4px;
     margin: 5px 0;
   }
-
-  .media-wrapper {
-    width: 100% !important;
-    max-width: 100%;
+  /* PDF iframe styling */
+  #editor iframe {
+    height: 400px;
+    border: none;
   }
-}
+
+  /* Storage Panel */
+  #storagePanel {
+    width: 320px;
+    background: #0d1130;
+    padding: 20px;
+    overflow-y: auto;
+    border-left: 2px solid #3f51b5;
+    display: flex;
+    flex-direction: column;
+  }
+  #storagePanel h2 {
+    margin-top: 0;
+    font-weight: 700;
+    color: #7986cb;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+  #savedNotesList {
+    margin-top: 15px;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .noteItem {
+    background: #1e2447;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #a6b2ff;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+    font-size: 0.85rem;
+  }
+  .noteItem:hover, .noteItem.active {
+    background: #3f51b5;
+    border-color: #7986cb;
+    color: #fff;
+  }
+
+  /* Preview modal */
+  #previewModal {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(11, 15, 25, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+  #previewContent {
+    background: #12162b;
+    border-radius: 8px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    color: #c7d0f7;
+    position: relative;
+  }
+  #previewClose {
+    background: #3f51b5;
+    border: none;
+    padding: 8px 16px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
 </style>
 </head>
 <body>
@@ -267,7 +265,9 @@ input[type="file"] {
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-  const { jsPDF } = window.jspdf;
+  const {
+    jsPDF
+  } = window.jspdf;
 
   // Elements
   const openEditorBtn = document.getElementById('openEditorBtn');
@@ -294,35 +294,38 @@ input[type="file"] {
 
   let currentNoteId = null;
 
-  // --- Editor open / close ---
+  // Open editor
   openEditorBtn.addEventListener('click', () => {
     editorSection.classList.add('active');
-    aboutBtn.style.display = 'none';
     openEditorBtn.style.display = 'none';
+    aboutBtn.style.display = 'none';
     if (!editor.innerHTML.trim()) {
       editor.innerHTML = '<p>Start writing your sci-fi notes here...</p>';
     }
   });
 
+  // Close editor
   closeEditorBtn.addEventListener('click', () => {
     editorSection.classList.remove('active');
     openEditorBtn.style.display = 'flex';
-    aboutBtn.style.display = 'flex';
+    aboutBtn.style.display = 'none';
     deselectAllNotes();
     currentNoteId = null;
     clearEditor();
   });
 
+  // About button: replace link with your own URL here
   aboutBtn.addEventListener('click', () => {
     window.open('https://unknownhims.github.io/eyy/', '_blank', 'noopener');
+   
   });
 
-  // --- Text formatting buttons ---
+  // Format buttons
   document.getElementById('boldBtn').addEventListener('click', () => document.execCommand('bold'));
   document.getElementById('italicBtn').addEventListener('click', () => document.execCommand('italic'));
   document.getElementById('underlineBtn').addEventListener('click', () => document.execCommand('underline'));
 
-  // --- Insert image from file ---
+  // Insert image file
   insertImageBtn.addEventListener('click', () => imageInput.click());
   imageInput.addEventListener('change', e => {
     const file = e.target.files[0];
@@ -333,8 +336,11 @@ input[type="file"] {
     }
     imageInput.value = '';
   });
+  function insertImage(src) {
+    insertAtCursor(`<img src="${src}" alt="Inserted image" />`);
+  }
 
-  // --- Insert video from file ---
+  // Insert video file
   insertVideoBtn.addEventListener('click', () => videoInput.click());
   videoInput.addEventListener('change', e => {
     const file = e.target.files[0];
@@ -345,64 +351,29 @@ input[type="file"] {
     }
     videoInput.value = '';
   });
+  function insertVideo(src) {
+    insertAtCursor(`<video controls src="${src}"></video>`);
+  }
 
-  // --- Insert via URL ---
+  // Insert Image URL
   insertImageUrlBtn.addEventListener('click', () => {
     const url = prompt('Enter image URL:');
     if (url) insertImage(url);
   });
 
+  // Insert Video URL
   insertVideoUrlBtn.addEventListener('click', () => {
     const url = prompt('Enter video URL (MP4/WebM):');
     if (url) insertVideo(url);
   });
 
+  // Insert PDF URL (embedded iframe)
   insertPdfUrlBtn.addEventListener('click', () => {
     const url = prompt('Enter PDF URL:');
-    if (url) {
-      const html = createMediaWrapper(`<iframe src="${url}" title="Embedded PDF"></iframe>`);
-      insertAtCursor(html);
-    }
+    if (url) insertAtCursor(`<iframe src="${url}" title="Embedded PDF"></iframe>`);
   });
 
-  // --- Functions to insert with wrapper ---
-  function insertImage(src) {
-    const html = createMediaWrapper(`<img src="${src}" alt="Inserted image">`);
-    insertAtCursor(html);
-  }
-
-  function insertVideo(src) {
-    const html = createMediaWrapper(`<video controls src="${src}"></video>`);
-    insertAtCursor(html);
-  }
-
-  function createMediaWrapper(innerHTML) {
-    // wrapper containing media + delete button; non-editable (so text editing around it is safe)
-    const wrapper = document.createElement('div');
-    wrapper.className = 'media-wrapper';
-    wrapper.setAttribute('contenteditable', 'false');
-    wrapper.setAttribute('draggable', 'true');
-    wrapper.style.position = 'relative';
-    wrapper.innerHTML = `
-      <button class="delete-btn" aria-label="Delete media" title="Delete media">✖</button>
-      ${innerHTML}
-    `;
-
-    // Delete handler
-    wrapper.querySelector('.delete-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
-      const w = e.target.parentElement;
-      if (w && w.parentElement) {
-        w.parentElement.removeChild(w);
-      }
-    });
-
-    // Add dragging functionality
-    addDragHandlers(wrapper);
-
-    return wrapper.outerHTML;
-  }
-
+  // Helper insert at cursor
   function insertAtCursor(html) {
     editor.focus();
     const sel = window.getSelection();
@@ -412,6 +383,7 @@ input[type="file"] {
     }
     const range = sel.getRangeAt(0);
     range.deleteContents();
+
     const el = document.createElement('div');
     el.innerHTML = html;
     const frag = document.createDocumentFragment();
@@ -420,6 +392,8 @@ input[type="file"] {
       lastNode = frag.appendChild(node);
     }
     range.insertNode(frag);
+
+    // Move cursor after inserted content
     if (lastNode) {
       range.setStartAfter(lastNode);
       range.collapse(true);
@@ -429,93 +403,7 @@ input[type="file"] {
     editor.focus();
   }
 
-  // --- Drag & Drop Move support ---
-  let dragSrcEl = null;
-
-  function addDragHandlers(elem) {
-    elem.addEventListener('dragstart', dragStartHandler);
-    elem.addEventListener('dragover', dragOverHandler);
-    elem.addEventListener('drop', dropHandler);
-    elem.addEventListener('dragend', dragEndHandler);
-  }
-
-  function dragStartHandler(e) {
-    const target = e.target.closest('.media-wrapper');
-    if (!target) return;
-    dragSrcEl = target;
-    e.dataTransfer.effectAllowed = 'move';
-    // Save the HTML of the dragged element
-    e.dataTransfer.setData('text/html', target.outerHTML);
-    // Make dragged invisible temporarily
-    setTimeout(() => {
-      target.style.display = 'none';
-    }, 0);
-  }
-
-  function dragOverHandler(e) {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-  }
-
-  function dropHandler(e) {
-    e.preventDefault();
-    const target = e.target.closest('.media-wrapper');
-    // drop into editor: find caret position from point
-    if (dragSrcEl) {
-      // restore the dragged element removed
-      dragSrcEl.style.display = 'inline-block';
-      // Remove the original
-      dragSrcEl.remove();
-      const dropHTML = e.dataTransfer.getData('text/html');
-      // Insert at drop point
-      const range = document.caretRangeFromPoint
-        ? document.caretRangeFromPoint(e.clientX, e.clientY)
-        : (document.caretPositionFromPoint
-            ? document.caretPositionFromPoint(e.clientX, e.clientY).range
-            : null);
-      if (range) {
-        range.insertNode(document.createRange().createContextualFragment(dropHTML));
-      } else {
-        // fallback
-        editor.appendChild(document.createRange().createContextualFragment(dropHTML));
-      }
-      // Re-bind handlers on newly inserted wrapper elements
-      rebindMediaWrappers();
-      dragSrcEl = null;
-    }
-  }
-
-  function dragEndHandler(e) {
-    if (dragSrcEl) {
-      dragSrcEl.style.display = 'inline-block';
-      dragSrcEl = null;
-    }
-  }
-
-  function rebindMediaWrappers() {
-    const wrappers = editor.querySelectorAll('.media-wrapper');
-    wrappers.forEach(w => {
-      // ensure delete button is bound
-      const del = w.querySelector('.delete-btn');
-      if (del && !del.hasListener) {
-        del.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const wrr = e.target.parentElement;
-          if (wrr && wrr.parentElement) {
-            wrr.parentElement.removeChild(wrr);
-          }
-        });
-        del.hasListener = true;
-      }
-      // ensure drag handlers
-      if (!w.hasAttribute('data-drag-bound')) {
-        addDragHandlers(w);
-        w.setAttribute('data-drag-bound', 'true');
-      }
-    });
-  }
-
-  // --- Save / Load notes ---
+  // Save Note
   saveBtn.addEventListener('click', () => {
     const content = editor.innerHTML.trim();
     if (!content || content === '<p>Start writing your sci-fi notes here...</p>') {
@@ -523,9 +411,11 @@ input[type="file"] {
       return;
     }
     if (currentNoteId) {
+      // Update existing
       localStorage.setItem(currentNoteId, content);
       alert('Note updated!');
     } else {
+      // Save new
       const id = Date.now().toString();
       localStorage.setItem(id, content);
       currentNoteId = id;
@@ -535,11 +425,11 @@ input[type="file"] {
     highlightNote(currentNoteId);
   });
 
+  // Load saved notes list
   function loadSavedNotes() {
     savedNotesList.innerHTML = '';
-    const keys = Object.keys(localStorage)
-      .filter(k => !isNaN(k))
-      .sort((a, b) => b - a);
+    // Sort keys by date desc
+    const keys = Object.keys(localStorage).filter(k => !isNaN(k)).sort((a,b) => b - a);
     if (keys.length === 0) {
       savedNotesList.innerHTML = '<p style="color:#7986cb; text-align:center;">No saved notes yet.</p>';
       return;
@@ -553,6 +443,8 @@ input[type="file"] {
       div.title = 'Click to load this note';
       div.innerHTML = summarizeContent(note);
       div.dataset.id = id;
+
+      // Click loads note
       div.addEventListener('click', () => loadNote(id));
       div.addEventListener('keydown', e => {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -560,20 +452,22 @@ input[type="file"] {
           loadNote(id);
         }
       });
+
       savedNotesList.appendChild(div);
     });
   }
 
+  // Highlight loaded note
   function highlightNote(id) {
     const items = document.querySelectorAll('.noteItem');
     items.forEach(i => i.classList.toggle('active', i.dataset.id === id));
   }
-
   function deselectAllNotes() {
     const items = document.querySelectorAll('.noteItem');
     items.forEach(i => i.classList.remove('active'));
   }
 
+  // Load note into editor
   function loadNote(id) {
     const content = localStorage.getItem(id);
     if (content) {
@@ -583,27 +477,28 @@ input[type="file"] {
       editorSection.classList.add('active');
       openEditorBtn.style.display = 'none';
     }
-    // After loading, rebind wrappers
-    setTimeout(() => rebindMediaWrappers(), 0);
   }
 
+  // Clear editor content
   function clearEditor() {
     editor.innerHTML = '<p>Start writing your sci-fi notes here...</p>';
   }
 
+  // Summarize note for display in list
   function summarizeContent(html) {
     const div = document.createElement('div');
     div.innerHTML = html;
     const text = div.textContent || div.innerText || '';
     if (text.length > 60) return text.slice(0, 57) + '...';
     if (text.length) return text;
+    // fallback: show presence of media
     if (html.includes('<img')) return '[Image Note]';
     if (html.includes('<video')) return '[Video Note]';
     if (html.includes('<iframe')) return '[PDF Note]';
     return '[Empty Note]';
   }
 
-  // --- Preview Note ---
+  // Preview Note
   previewBtn.addEventListener('click', () => {
     previewBody.innerHTML = editor.innerHTML;
     previewModal.style.display = 'flex';
@@ -612,14 +507,13 @@ input[type="file"] {
   previewClose.addEventListener('click', () => {
     previewModal.style.display = 'none';
   });
-
   previewModal.addEventListener('click', e => {
     if (e.target === previewModal) {
       previewModal.style.display = 'none';
     }
   });
 
-  // --- Keyboard shortcuts for bold/italic/underline ---
+  // Keyboard shortcuts for formatting
   editor.addEventListener('keydown', e => {
     if (e.ctrlKey) {
       switch (e.key.toLowerCase()) {
@@ -639,10 +533,15 @@ input[type="file"] {
     }
   });
 
-  // --- Save as PDF ---
+  // Save as PDF button
   savePdfBtn.addEventListener('click', async () => {
+    // Show loading alert (can be replaced with better UI)
     alert('Generating PDF, please wait...');
+
+    // Use html2canvas to convert editor content to canvas
     const element = editor;
+
+    // Temporarily scale for better resolution
     const scale = 2;
     const canvas = await html2canvas(element, {
       scale: scale,
@@ -650,21 +549,23 @@ input[type="file"] {
       logging: false,
       backgroundColor: '#12162b'
     });
+
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'pt',
-      format: [canvas.width * 72 / 96, canvas.height * 72 / 96] 
+      format: [canvas.width * 72 / 96, canvas.height * 72 / 96] // convert px to pt approx (96dpi -> 72pt)
     });
     pdf.addImage(imgData, 'PNG', 0, 0, canvas.width * 72 / 96, canvas.height * 72 / 96);
-    const filename = `SciFiNote_${new Date().toISOString().replace(/[:.]/g,'-')}.pdf`;
+
+    // Save with timestamp filename
+    const filename = `SciFiNote_${new Date().toISOString().replace(/[:.]/g, '-')}.pdf`;
     pdf.save(filename);
   });
 
-  // On load
+  // On page load
   loadSavedNotes();
 
 </script>
-
 </body>
 </html>
