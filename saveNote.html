@@ -255,7 +255,7 @@
     </svg>
     Task List
   </a>
-   <a href="https://unknownhims.github.io/ai/" id="aboutBtn" class="toolbarBtn" title="Task List" aria-label="About link button" style="text-decoration:none;">
+   <a href="https://unknownhims.github.io/ai/" id="aboutBtn2" class="toolbarBtn" title="Search" aria-label="About link button" style="text-decoration:none;">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <path d="M3.9 12a5 5 0 0 1 5-5h3v2H8.9a3 3 0 0 0 0 6h3v2h-3a5 5 0 0 1-5-5zm11.2-3h-3v2h3a3 3 0 0 1 0 6h-3v2h3a5 5 0 0 0 0-10z"/>
     </svg>
@@ -314,6 +314,7 @@
   // Elements
   const openEditorBtn = document.getElementById('openEditorBtn');
   const aboutBtn = document.getElementById('aboutBtn');
+  const aboutBtn2 = document.getElementById('aboutBtn2');
   const editorSection = document.getElementById('editorSection');
   const editor = document.getElementById('editor');
   const savedNotesList = document.getElementById('savedNotesList');
@@ -341,6 +342,7 @@
     editorSection.classList.add('active');
     openEditorBtn.style.display = 'none';
     aboutBtn.style.display = 'none';
+    aboutBtn2.style.display = 'none';
     if (!editor.innerHTML.trim()) {
       editor.innerHTML = '<p>Start writing your sci-fi notes here...</p>';
     }
@@ -351,6 +353,7 @@
     editorSection.classList.remove('active');
     openEditorBtn.style.display = 'flex';
     aboutBtn.style.display = 'flex';
+    aboutBtn2.style.display = 'flex';
     deselectAllNotes();
     currentNoteId = null;
     clearEditor();
