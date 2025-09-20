@@ -534,39 +534,19 @@
     const resetTimerBtn = document.getElementById('reset-timer');
     const minutesInput = document.getElementById('minutes');
     const countdownDisplay = document.getElementById('countdown-display');
- const toggleWikiBtn = document.getElementById('toggle-wiki');
-  const wikiBox = document.getElementById('wiki-box');
-
-  // Toggle visibility
-  toggleWikiBtn.addEventListener('click', () => {
-    const visible = wikiBox.style.display === 'block';
-    wikiBox.style.display = visible ? 'none' : 'block';
-  });
-
-  // Drag functionality
-  let isDragging = false;
-  let offsetX = 0, offsetY = 0;
-
-  wikiBox.addEventListener('mousedown', (e) => {
-    if (e.target.tagName === 'IFRAME') return; // avoid dragging when inside iframe
-    isDragging = true;
-    offsetX = e.clientX - wikiBox.offsetLeft;
-    offsetY = e.clientY - wikiBox.offsetTop;
-    wikiBox.style.cursor = 'grabbing';
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const x = e.clientX - offsetX;
-    const y = e.clientY - offsetY;
-    wikiBox.style.left = `${x}px`;
-    wikiBox.style.top = `${y}px`;
-  });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    wikiBox.style.cursor = 'move';
-  });
+   const toggleWikiBtn = document.getElementById('toggle-wiki');
+    const wikiBox = document.getElementById('wiki-box');
+  
+    // Toggle visibility
+    toggleWikiBtn.addEventListener('click', () => {
+      const visible = wikiBox.style.display === 'block';
+      wikiBox.style.display = visible ? 'none' : 'block';
+    });
+  
+   
+    
+  
+   
  
 // 🆕 --- SAVE EVERYTHING TO LOCAL STORAGE --- //
 function saveAll() {
