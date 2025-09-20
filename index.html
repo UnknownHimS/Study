@@ -208,6 +208,12 @@
   </style>
 </head>
 <body>
+   <div id="assistant-container" 
+     style="position: fixed; top: 80px; right: 30px; width: 360px; height: 500px; background: #25254b; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); z-index: 9999; cursor: move;">
+  <iframe src="https://UnknownHimS.github.io/Study/wiki.html" 
+          style="width: 100%; height: 100%; border: none; border-radius: 12px;">
+  </iframe>
+</div>
 
   <!-- Timer Button + Popup -->
   <button id="timer-btn" title="Toggle Timer Panel">⏱ Timer</button>
@@ -368,10 +374,42 @@
     const sidebar = document.getElementById('sidebar');
     const uploadDeviceBtn = document.getElementById('btn-upload-device');
     const deviceImageInput = document.getElementById('deviceImageInput');
+    const dragElement = document.getElementById('assistant-container');
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     
-    uploadDeviceBtn.onclick = () => {
-      deviceImageInput.click();
-    };
+      dragElement.onmousedown = dragMouseDown;
+    
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get mouse starting position
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+    
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate new cursor position
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position
+        dragElement.style.top = (dragElement.offsetTop - pos2) + "px";
+        dragElement.style.left = (dragElement.offsetLeft - pos1) + "px";
+        dragElement.style.right = "auto"; // reset right to avoid conflict when dragging
+      }
+    
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+        uploadDeviceBtn.onclick = () => {
+          deviceImageInput.click();
+        };
     
     deviceImageInput.onchange = (event) => {
       const file = event.target.files[0];
