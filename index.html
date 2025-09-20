@@ -204,6 +204,150 @@
       font-weight: bold;
       color: #4caf50;
     }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      margin: 0;
+      padding: 40px 20px;
+      min-height: 100vh;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: #1f1f3d;
+      border-radius: 16px;
+      padding: 30px 40px;
+      max-width: 700px;
+      width: 100%;
+      margin: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      transition: transform 0.5s ease, opacity 0.5s ease;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #f5f5f7;
+    }
+
+    #status {
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #a3a3f7;
+      min-height: 28px;
+      user-select: none;
+    }
+
+    .btn-group {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-group button {
+      background: linear-gradient(90deg, #f6d365 0%, #fda085 100%);
+      border: none;
+      border-radius: 30px;
+      color: #1f1f3d;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 14px 22px;
+      cursor: pointer;
+      margin: 6px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 15px rgba(253, 160, 133, 0.5);
+    }
+
+    .btn-group button:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(253, 160, 133, 0.7);
+    }
+
+    .btn-group button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    #results button {
+      background: #3a3a6e;
+      border: none;
+      border-radius: 12px;
+      color: #e0e0ff;
+      font-size: 1.15rem;
+      font-weight: 600;
+      padding: 16px 20px;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(58, 58, 110, 0.6);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #results button:hover {
+      background: #5a5abb;
+      box-shadow: 0 6px 20px rgba(90, 90, 187, 0.8);
+    }
+
+    #results::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #results::-webkit-scrollbar-thumb {
+      background-color: #918fdf;
+      border-radius: 3px;
+    }
+
+    /* Sci-fi toggle button */
+    #toggle-panel {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle at center, #f0f0f0 10%, #764ba2 80%);
+      border-radius: 50%;
+      border: 3px solid #fff;
+      cursor: pointer;
+      box-shadow: 0 0 20px #fff, 0 0 30px #00f, 0 0 40px #0ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      transition: transform 0.3s ease;
+    }
+
+    #toggle-panel:hover {
+      transform: scale(1.1) rotate(10deg);
+    }
+
+    #toggle-panel svg {
+      width: 30px;
+      height: 30px;
+      fill: #1f1f3d;
+    }
+
+    .hidden {
+      transform: scale(0.9);
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
@@ -302,6 +446,7 @@
         <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
       </svg>
     </button>
+    
 
      <a href="saveNote.html" id="btn-ancient-logo" title="Ancient Sci-Fi Logo" aria-label="Ancient style logo button" style="background:none; border:none; padding:4px; cursor:pointer; text-decoration:none;">
       <svg
@@ -340,7 +485,23 @@
      
 
   </div>
-   
+       <div id="toggle-panel" title="Toggle Wiki Panel">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 2L15 8H9L12 2ZM2 22H22L12 13L2 22Z" />
+    </svg>
+  </div>
+
+  <!-- Main wiki container -->
+  <div class="container hidden" id="wiki-panel">
+    <h2>Wiki Search Titles Only</h2>
+    <div class="btn-group">
+      <button id="listen-btn">Start Listening</button>
+      <button id="stop-btn">Stop Listening</button>
+      <button id="stop-speech-btn">Stop Speaking</button>
+    </div>
+    <div id="status">Click “Start Listening”, say topics (like "Batman and Einstein"), then say “stop”.</div>
+    <div id="results"></div>
+  </div>
   <script>
     
     const drawBtn = document.getElementById('btn-draw');
@@ -975,6 +1136,149 @@ window.addEventListener('load', () => {
         localStorage.setItem('mediaUrl', url);
       }
     };
+
+     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const listenBtn = document.getElementById('listen-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const stopSpeechBtn = document.getElementById('stop-speech-btn');
+    const statusDiv = document.getElementById('status');
+    const resultsDiv = document.getElementById('results');
+    const togglePanelBtn = document.getElementById('toggle-panel');
+    const wikiPanel = document.getElementById('wiki-panel');
+
+    let recognition;
+    let listening = false;
+    let voices = [];
+    let currentUtterance = null;
+
+    function loadVoices() {
+      voices = speechSynthesis.getVoices();
+      if (!voices.length) setTimeout(loadVoices, 100);
+    }
+
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    function speak(text) {
+      if (!text) return;
+      if (speechSynthesis.speaking) speechSynthesis.cancel();
+
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.rate = 0.9;
+      currentUtterance.pitch = 1.0;
+
+      const female = voices.find(v => v.lang.startsWith('en') && /female|woman/i.test(v.name));
+      currentUtterance.voice = female || voices.find(v => v.lang.startsWith('en'));
+
+      speechSynthesis.speak(currentUtterance);
+    }
+
+    function extractTopics(raw) {
+      const filler = ['what','is','the','a','an','and','tell','me','about','please','of','for'];
+      let parts = raw.toLowerCase().split(/\band\b|,|;/).map(p =>
+        p.split(/\s+/).filter(w => !filler.includes(w)).join(' ')
+      );
+      return parts.filter(p => p.trim().length > 0);
+    }
+
+    async function searchTopics(query) {
+      const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&list=search&srsearch=${encodeURIComponent(query)}&srlimit=5`;
+      const res = await fetch(url);
+      const data = await res.json();
+      return data.query?.search?.map(item => item.title) || [];
+    }
+
+    async function fetchSummary(title) {
+      const url = `https://en.wikipedia.org/w/api.php?action=query&origin=*&format=json&prop=extracts&exintro=true&explaintext=true&redirects=1&titles=${encodeURIComponent(title)}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const page = Object.values(data.query.pages)[0];
+      return page.extract || `No summary for "${title}".`;
+    }
+
+    listenBtn.addEventListener('click', () => {
+      if (!SpeechRecognition || listening) return;
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      let finalTranscript = "";
+
+      recognition.onresult = (evt) => {
+        let interim = "";
+        for (let i = evt.resultIndex; i < evt.results.length; i++) {
+          let part = evt.results[i][0].transcript;
+          if (part.toLowerCase().includes("stop")) {
+            part = part.replace(/stop/gi, "").trim();
+            if (evt.results[i].isFinal) finalTranscript += part + " ";
+            recognition.stop();
+            break;
+          } else {
+            if (evt.results[i].isFinal) finalTranscript += part + " ";
+            else interim += part + " ";
+          }
+        }
+        statusDiv.textContent = "🎧 You said: " + (finalTranscript + interim).trim();
+      };
+
+      recognition.onend = async () => {
+        listening = false;
+        stopBtn.disabled = true;
+
+        const raw = statusDiv.textContent.replace("🎧 You said:", "").trim();
+        if (!raw) return statusDiv.textContent = "No speech detected.";
+
+        statusDiv.textContent = `Searching for "${raw}"...`;
+        const topics = extractTopics(raw);
+        let allTitles = [];
+
+        for (const t of topics) {
+          const titles = await searchTopics(t);
+          allTitles.push(...titles);
+        }
+
+        allTitles = [...new Set(allTitles)];
+        if (!allTitles.length) return statusDiv.textContent = "No topics found.";
+
+        resultsDiv.innerHTML = '';
+        statusDiv.textContent = `Click a title to hear its summary:`;
+
+        for (const title of allTitles) {
+          const btn = document.createElement('button');
+          btn.textContent = title;
+          btn.addEventListener('click', async () => {
+            const summary = await fetchSummary(title);
+            speak(summary);
+          });
+          resultsDiv.appendChild(btn);
+        }
+      };
+
+      recognition.onerror = (e) => {
+        statusDiv.textContent = `Error: ${e.error}`;
+        listening = false;
+      };
+
+      recognition.start();
+      listening = true;
+      statusDiv.textContent = "🎤 Listening... say 'stop' to finish";
+      stopBtn.disabled = false;
+    });
+
+    stopBtn.addEventListener('click', () => {
+      if (listening && recognition) recognition.stop();
+      listening = false;
+    });
+
+    stopSpeechBtn.addEventListener('click', () => {
+      speechSynthesis.cancel();
+    });
+
+    togglePanelBtn.addEventListener('click', () => {
+      wikiPanel.classList.toggle('hidden');
+    });
   </script>
 </body>
 </html>
