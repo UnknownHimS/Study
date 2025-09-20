@@ -6,7 +6,7 @@
   <link rel="icon" type="image/png" href="https://i.pinimg.com/originals/3e/e7/87/3ee78760d85467a2819be0d1ae677655.png" />
 
   <style>
-     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
     
     * {
       margin: 0; padding: 0; box-sizing: border-box;
@@ -233,7 +233,8 @@
     #wiki-assistant {
       display: none;
       position: fixed;
-     
+      width:100%;
+      height:100%;
       min-width:5px;
       min-height:5px;
       background: #25254b;
@@ -439,7 +440,7 @@
 
     <!-- Wiki Assistant Panel -->
     <div id="wiki-assistant">
-     <iframe src="wiki.html" title="Wiki Assistant"></iframe>
+     <iframe src="wiki.html" title="Wiki Assistant" style="width:100%; height:100%;"></iframe>
     </div>
     
      <button id="save-everything" style=" color: white; border: none; cursor: pointer;">💾</button>
